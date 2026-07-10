@@ -1,0 +1,9 @@
+#!/bin/sh
+TOKEN="{{ promptString "Enter your private GitHub PAT" }}"
+AGE_KEY="{{ promptString "Enter your Age Secret Key (age1...)" }}"
+
+mkdir -p "$HOME/.config/chezmoi"
+echo "$AGE_KEY" > "$HOME/.config/chezmoi/key.txt"
+chmod 600 "$HOME/.config/chezmoi/key.txt"
+
+sh -c "$(curl -fsLS https://chezmoi.io)" -- init --apply "https://${TOKEN}@github.com/toadzky/chezmoi-private"
