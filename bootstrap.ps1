@@ -1,5 +1,6 @@
-$TOKEN = "{{ promptString "Enter your private GitHub PAT" }}"
-$AGE_KEY = "{{ promptString "Enter your Age Secret Key (age1...)" }}"
+$TOKEN = Read-Host -Prompt "Enter your private GitHub PAT" -AsSecureString
+AGE_KEY= Read-Host -Prompt "Enter your Age Secret Key (age1...)"  -AsSecureString
+
 
 New-Item -ItemType Directory -Force -Path "$HOME\.config\chezmoi"
 Set-Content -Path "$HOME\.config\chezmoi\key.txt" -Value $AGE_KEY
