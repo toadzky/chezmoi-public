@@ -1,5 +1,5 @@
-$TOKEN = Read-Host -Prompt "Enter your private GitHub PAT" -AsSecureString
-AGE_KEY= Read-Host -Prompt "Enter your Age Secret Key (age1...)"  -AsSecureString
+$TOKEN   = Read-Host -Prompt "Enter your private GitHub PAT" -AsSecureString
+$AGE_KEY =  Read-Host -Prompt "Enter your Age Secret Key (age1...)" -AsSecureString
 
 
 New-Item -ItemType Directory -Force -Path "$HOME\.config\chezmoi"
