@@ -30,7 +30,7 @@ if command -v dcli; then
 else
     mkdir -p ~/.local/bin
     DOWNLOAD_URL=$(curl -s https://api.github.com/repos/Dashlane/dashlane-cli/releases/latest | jq '.assets[] | select(.name | contains("linux-x64")) | .browser_download_url' -r)
-    curl -L -o "~/.local/bin/$(basename "$DOWNLOAD_URL")" "dcli"
+    curl -L -o "~/.local/bin/dcli" "$DOWNLOAD_URL"
     chmod +x ~/.local/bin/dcli
 fi
 
@@ -43,4 +43,8 @@ dcli note chezmoi -o json | jq '.[0].content | fromjson | .ageKey' -r > "$HOME/.
 chmod 600 "$HOME/.config/chezmoi/key.txt"
 
 TOKEN=$(dcli note chezmoi -o json | jq '.[0].content | fromjson | .githubToken' -r)
-sh -c "$(curl -fsLS https://chezmoi.io)" -- init --apply "https://${TOKEN}@github.com/toadzky/chezmoi-private"
+echo "Installing chezmoi..."
+sh -c "$(curl -fsLS https://chezmoi.io/lb)"
+
+echo "Initilizing and applying chezmoi configuration..."
+chezmoi init --apply "https://${TOKEN}@github.com/toadzky/chezmoi-private"
