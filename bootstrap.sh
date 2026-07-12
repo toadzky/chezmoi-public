@@ -19,6 +19,8 @@ lock-after=false
     chmod 700 "$KEYRING_DIR"
     chmod 600 "$DEFAULT_KEYRING"
 
+    gnome-keyring-daemon --replace
+
     echo "Skeleton 'login' keyring injected. It will prompt for a password upon next application access."
 fi
 
