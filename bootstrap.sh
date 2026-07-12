@@ -1,11 +1,33 @@
 #!/bin/sh
 
+KEYRING_DIR="$HOME/.local/share/keyrings"
+DEFAULT_KEYRING="$KEYRING_DIR/login.keyring"
+if [ -f "$DEFAULT_KEYRING" ]; then
+    echo "Keyring already setup up, proceeding..."
+else
+    echo "No default keyring found. Creating for Dashlane CLI..."
+    mkdir -p "$KEYRING_DIR"
+
+    # Write the login keyring file framework
+    printf "[keyring]
+display-name=login
+lock-on-idle=false
+lock-after=false
+" > $DEFAULT_KEYRING
+
+    # Ensure permissions are secure (read/write only by owner)
+    chmod 700 "$KEYRING_DIR"
+    chmod 600 "$DEFAULT_KEYRING"
+
+    echo "Skeleton 'login' keyring injected. It will prompt for a password upon next application access."
+fi
+
 export PATH="~/.local/bin:$PATH"
 if command -v dcli; then
     echo "Dashlane CLI already installed, proceeding..."
 else
     mkdir -p ~/.local/bin
-    DOWNLOAD_URL=$(curl -s https://api.github.com/repos/Dashlane/dashlane-cli/releases/latest | jq '.assets[] | select(.name | contains("linux-x64")) | .url' -r)
+    DOWNLOAD_URL=$(curl -s https://api.github.com/repos/Dashlane/dashlane-cli/releases/latest | jq '.assets[] | select(.name | contains("linux-x64")) | .browser_download_url' -r)
     curl -L -o "~/.local/bin/$(basename "$DOWNLOAD_URL")" "dcli"
     chmod +x ~/.local/bin/dcli
 fi
