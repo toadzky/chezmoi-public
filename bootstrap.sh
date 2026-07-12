@@ -1,9 +1,22 @@
 #!/bin/sh
-read -p -s "Enter your private GitHub PAT: " TOKEN
-read -p -s "Enter your Age Secret Key: " AGE_KEY
+
+export PATH="~/.local/bin:$PATH"
+if command -v dcli; then
+    echo "Dashlane CLI already installed, proceeding..."
+else
+    mkdir -p ~/.local/bin
+    DOWNLOAD_URL=$(curl -s https://api.github.com/repos/Dashlane/dashlane-cli/releases/latest | jq '.assets[] | select(.name | contains("linux-x64")) | .url' -r)
+    curl -L -o "~/.local/bin/$(basename "$DOWNLOAD_URL")" "dcli"
+    chmod +x ~/.local/bin/dcli
+fi
+
+# should force login
+dcli sync
 
 mkdir -p "$HOME/.config/chezmoi"
-echo "$AGE_KEY" > "$HOME/.config/chezmoi/key.txt"
+
+dcli note chezmoi -o json | jq '.[0].content | fromjson | .ageKey' -r > "$HOME/.config/chezmoi/key.txt"
 chmod 600 "$HOME/.config/chezmoi/key.txt"
 
+TOKEN=$(dcli note chezmoi -o json | jq '.[0].content | fromjson | .githubToken' -r)
 sh -c "$(curl -fsLS https://chezmoi.io)" -- init --apply "https://${TOKEN}@github.com/toadzky/chezmoi-private"
